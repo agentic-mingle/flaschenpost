@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flaschenpost Verify — agent-mingle</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --amber: #d29922;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 720px; width: 100%; }
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+  }
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 3rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    margin-bottom: 1.5rem;
+  }
+  .drop-zone:hover, .drop-zone.dragover {
+    border-color: var(--accent);
+    background: rgba(88, 166, 255, 0.05);
+  }
+  .drop-zone p { color: var(--text-muted); font-size: 0.95rem; }
+  .drop-zone .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  input[type="file"] { display: none; }
+
+  .result { display: none; margin-top: 1rem; }
+  .result.show { display: block; }
+
+  .status-bar {
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .status-bar.verified { background: rgba(63, 185, 80, 0.12); border: 1px solid rgba(63, 185, 80, 0.3); color: var(--green); }
+  .status-bar.hash-only { background: rgba(210, 153, 34, 0.12); border: 1px solid rgba(210, 153, 34, 0.3); color: var(--amber); }
+  .status-bar.failed { background: rgba(248, 81, 73, 0.12); border: 1px solid rgba(248, 81, 73, 0.3); color: var(--red); }
+  .status-bar .icon { font-size: 1.5rem; }
+
+  .detail-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+  .detail-header {
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-row {
+    padding: 0.5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-row .label { color: var(--text-muted); min-width: 140px; flex-shrink: 0; }
+  .detail-row .value {
+    word-break: break-all;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.8rem;
+    text-align: right;
+  }
+  .detail-row .value.ok { color: var(--green); }
+  .detail-row .value.fail { color: var(--red); }
+  .detail-row .value.warn { color: var(--amber); }
+
+  .hash-compare {
+    padding: 0.75rem 1rem;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    font-size: 0.75rem;
+    line-height: 1.6;
+  }
+  .hash-compare .label-sm { color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; }
+
+  .info-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-top: 2rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .info-box a { color: var(--accent); text-decoration: none; }
+  .info-box a:hover { text-decoration: underline; }
+
+  .footer {
+    margin-top: 3rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+  }
+  .footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Flaschenpost Verify</h1>
+  <p class="subtitle">TPM2 hardware attestation verification for signed JSON payloads</p>
+
+  <div class="drop-zone" id="dropZone">
+    <div class="icon">&#x1F4E8;</div>
+    <p>Drop a Flaschenpost JSON file here<br>or click to select</p>
+    <input type="file" id="fileInput" accept=".json">
+  </div>
+
+  <div class="result" id="result">
+    <div class="status-bar" id="statusBar">
+      <span class="icon" id="statusIcon"></span>
+      <span id="statusText"></span>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-header">Attestation</div>
+      <div class="detail-row">
+        <span class="label">Method</span>
+        <span class="value" id="atMethod">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Signed at</span>
+        <span class="value" id="atSignedAt">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Version</span>
+        <span class="value" id="atVersion">—</span>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-header">Content Hash (SHA-256)</div>
+      <div class="detail-row">
+        <span class="label">Hash valid</span>
+        <span class="value" id="hashStatus">—</span>
+      </div>
+      <div class="hash-compare">
+        <div class="label-sm">Stored</div>
+        <div id="hashStored" style="color:var(--text-muted)">—</div>
+        <div class="label-sm" style="margin-top:0.5rem">Computed</div>
+        <div id="hashComputed" style="color:var(--text-muted)">—</div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-header">RSA Signature</div>
+      <div class="detail-row">
+        <span class="label">Signature valid</span>
+        <span class="value" id="sigStatus">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Key hash</span>
+        <span class="value" id="keyHash">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Signature</span>
+        <span class="value" id="sigPreview">—</span>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-header">Payload</div>
+      <div class="detail-row">
+        <span class="label">Type</span>
+        <span class="value" id="payType">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Timestamp</span>
+        <span class="value" id="payTimestamp">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Language</span>
+        <span class="value" id="payLang">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Content fields</span>
+        <span class="value" id="payFields">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <strong>How verification works:</strong><br>
+    1. The <code>content</code> field is serialized as JSON (sorted keys, UTF-8).<br>
+    2. A SHA-256 hash is computed and compared to the stored <code>content_hash</code>.<br>
+    3. The RSA-2048 signature is verified against the TPM2 public signing key.<br>
+    <br>
+    The signing key lives inside a Nuvoton NPCT75x TPM chip. The private key never leaves the hardware.
+    All verification happens locally in your browser — no data is sent anywhere.
+    <br><br>
+    <a href="https://github.com/agent-mingle/flaschenpost">github.com/agent-mingle/flaschenpost</a>
+  </div>
+
+  <div class="footer">
+    <code>generated_by: ai</code> · <a href="https://github.com/agent-mingle">agent-mingle</a>
+  </div>
+</div>
+
+<script>
+// Public Key PEM — same as in verify_flaschenpost.py
+const SIGNING_PUB_PEM = `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArX/N0ITNrpwzlynS9U66
+D9ew0rz6X34Z82aTLJSj5q6itf59oll+I2weJDUV/wzQvKGYZYlOUvWB+zDum9Z9
+9VDnim+j9CTIBE4Snbxx3aBoBemUTNKOT1dab5Y9KdOLqGx1GhenURTVO1yvPFak
+pipH9Fxtu95J8rkxIm+ufvE/r8nr3qjWlU43crM8MV1qiPw49PEiEqdQeOzRcK14
+lDIZFaQHMzz0PVUieH7JWzWSyeFO0HNx4eXQOW0zQoY719iE02uaz/zNjyyG4zCy
+/Q/6bOHxzVpvzz4hmG+Sf9COmnoGJJpEjSrpaC/a5+mzDKgbiaREb3l0+KygAwfv
+SwIDAQAB
+-----END PUBLIC KEY-----`;
+
+const KNOWN_KEY_HASH = 'db15aecbca8bb1e8b8d55b4dbf358b182f58af5dd3c122c865f68ed2966dddab';
+
+// PEM to ArrayBuffer
+function pemToArrayBuffer(pem) {
+  const b64 = pem
+    .replace(/-----BEGIN PUBLIC KEY-----/, '')
+    .replace(/-----END PUBLIC KEY-----/, '')
+    .replace(/\s/g, '');
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes.buffer;
+}
+
+// Import public key for RSA verification
+async function importPublicKey() {
+  const keyBuffer = pemToArrayBuffer(SIGNING_PUB_PEM);
+  return crypto.subtle.importKey(
+    'spki', keyBuffer,
+    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+    false, ['verify']
+  );
+}
+
+// Compute SHA-256 hex
+async function sha256hex(text) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Compute SHA-256 of public key DER for key identification
+async function computeKeyHash() {
+  const keyBuffer = pemToArrayBuffer(SIGNING_PUB_PEM);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', keyBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Match Python's json.dumps(content, sort_keys=True, ensure_ascii=False)
+// Python default separators are (', ', ': ') — JSON.stringify uses no spaces
+// We must replicate Python's exact output for hash matching
+function pythonJsonDumps(obj) {
+  // Deep sort keys recursively
+  function sortKeys(o) {
+    if (typeof o !== 'object' || o === null || Array.isArray(o)) return o;
+    const sorted = {};
+    for (const key of Object.keys(o).sort()) {
+      sorted[key] = sortKeys(o[key]);
+    }
+    return sorted;
+  }
+  // Use JSON.stringify with a replacer for sorted keys, then use
+  // the native 2-arg form that adds spaces — but that won't work.
+  // Instead: manually build the output matching Python's format.
+  // Python json.dumps with default separators uses `, ` between items
+  // and `: ` between key and value — but ONLY at the structural level,
+  // not inside string values.
+  const sorted = sortKeys(obj);
+  // JSON.stringify already handles escaping correctly.
+  // We just need to add spaces at structural positions.
+  // Strategy: walk the compact JSON char by char, track string context.
+  const compact = JSON.stringify(sorted);
+  let result = '';
+  let inString = false;
+  let escape = false;
+  for (let i = 0; i < compact.length; i++) {
+    const ch = compact[i];
+    if (escape) {
+      result += ch;
+      escape = false;
+      continue;
+    }
+    if (ch === '\\' && inString) {
+      result += ch;
+      escape = true;
+      continue;
+    }
+    if (ch === '"') {
+      inString = !inString;
+      result += ch;
+      continue;
+    }
+    if (!inString) {
+      if (ch === ':') { result += ': '; continue; }
+      if (ch === ',') { result += ', '; continue; }
+    }
+    result += ch;
+  }
+  return result;
+}
+
+// Verify a flaschenpost
+async function verifyFlaschenpost(data) {
+  const result = {
+    hasAttestation: false,
+    hashValid: false,
+    signatureValid: false,
+    verified: false,
+    method: null,
+    signedAt: null,
+    version: null,
+    storedHash: null,
+    computedHash: null,
+    sigPreview: null,
+    keyHash: null,
+    error: null
+  };
+
+  // Check attestation
+  const attestation = data.attestation;
+  if (!attestation) {
+    result.error = 'No attestation block found';
+    return result;
+  }
+  result.hasAttestation = true;
+  result.method = attestation.method || 'unknown';
+  result.signedAt = attestation.signed_at || 'unknown';
+  result.version = attestation.version || 'unknown';
+
+  // Verify content hash
+  const content = data.content;
+  if (!content) {
+    result.error = 'No content block found';
+    return result;
+  }
+
+  // Match Python: json.dumps(content, sort_keys=True, ensure_ascii=False)
+  const contentStr = pythonJsonDumps(content);
+  result.computedHash = await sha256hex(contentStr);
+  result.storedHash = attestation.content_hash || '';
+  result.hashValid = result.computedHash === result.storedHash;
+
+  if (!result.hashValid) {
+    result.error = 'Content hash mismatch — content may have been modified';
+    return result;
+  }
+
+  // Verify RSA signature
+  const sigB64 = attestation.sig;
+  if (!sigB64) {
+    result.error = 'No signature found';
+    return result;
+  }
+  result.sigPreview = sigB64.substring(0, 24) + '...';
+
+  try {
+    const pubKey = await importPublicKey();
+    const sigBinary = atob(sigB64);
+    const sigBytes = new Uint8Array(sigBinary.length);
+    for (let i = 0; i < sigBinary.length; i++) sigBytes[i] = sigBinary.charCodeAt(i);
+
+    const contentBytes = new TextEncoder().encode(contentStr);
+    result.signatureValid = await crypto.subtle.verify(
+      'RSASSA-PKCS1-v1_5',
+      pubKey,
+      sigBytes.buffer,
+      contentBytes
+    );
+  } catch (e) {
+    result.error = 'Signature verification error: ' + e.message;
+    return result;
+  }
+
+  result.keyHash = await computeKeyHash();
+  result.verified = result.hashValid && result.signatureValid;
+  return result;
+}
+
+// UI
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const resultDiv = document.getElementById('result');
+
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) processFile(file);
+});
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file) processFile(file);
+});
+
+async function processFile(file) {
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    const r = await verifyFlaschenpost(data);
+    showResult(r, data);
+  } catch (e) {
+    showError('Failed to parse JSON: ' + e.message);
+  }
+}
+
+function showResult(r, data) {
+  resultDiv.classList.add('show');
+
+  const bar = document.getElementById('statusBar');
+  const icon = document.getElementById('statusIcon');
+  const text = document.getElementById('statusText');
+
+  bar.className = 'status-bar';
+  if (r.verified) {
+    bar.classList.add('verified');
+    icon.textContent = '\u2705';
+    text.textContent = 'Verified — content and signature are authentic';
+  } else if (r.hashValid && !r.signatureValid) {
+    bar.classList.add('hash-only');
+    icon.textContent = '\u26A0\uFE0F';
+    text.textContent = 'Content intact but signature could not be verified';
+  } else if (!r.hasAttestation) {
+    bar.classList.add('failed');
+    icon.textContent = '\u274C';
+    text.textContent = 'No attestation — this file is not signed';
+  } else {
+    bar.classList.add('failed');
+    icon.textContent = '\u274C';
+    text.textContent = r.error || 'Verification failed';
+  }
+
+  // Attestation
+  document.getElementById('atMethod').textContent = r.method || '—';
+  document.getElementById('atSignedAt').textContent = r.signedAt || '—';
+  document.getElementById('atVersion').textContent = r.version || '—';
+
+  // Hash
+  const hs = document.getElementById('hashStatus');
+  hs.textContent = r.hashValid ? '\u2713 Match' : '\u2717 Mismatch';
+  hs.className = 'value ' + (r.hashValid? 'ok' : 'fail');
+  document.getElementById('hashStored').textContent = r.storedHash || '—';
+  document.getElementById('hashComputed').textContent = r.computedHash || '—';
+
+  // Signature
+  const ss = document.getElementById('sigStatus');
+  if (r.signatureValid) {
+    ss.textContent = '\u2713 Valid';
+    ss.className = 'value ok';
+  } else if (r.hashValid && !r.signatureValid && r.hasAttestation) {
+    ss.textContent = '\u2717 Invalid';
+    ss.className = 'value fail';
+  } else {
+    ss.textContent = '— Not checked';
+    ss.className = 'value warn';
+  }
+  document.getElementById('keyHash').textContent = r.keyHash || '—';
+  document.getElementById('sigPreview').textContent = r.sigPreview || '—';
+
+  // Payload
+  document.getElementById('payType').textContent = data.type || '—';
+  document.getElementById('payTimestamp').textContent = data.timestamp || '—';
+  document.getElementById('payLang').textContent = (data.metadata && data.metadata.language) || '—';
+  document.getElementById('payFields').textContent = data.content ? Object.keys(data.content).join(', ') : '—';
+}
+
+function showError(msg) {
+  resultDiv.classList.add('show');
+  const bar = document.getElementById('statusBar');
+  bar.className = 'status-bar failed';
+  document.getElementById('statusIcon').textContent = '\u274C';
+  document.getElementById('statusText').textContent = msg;
+}
+</script>
+
+</body>
+</html>
