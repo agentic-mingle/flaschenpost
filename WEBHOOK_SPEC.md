@@ -12,11 +12,11 @@ This document specifies the self-hosted callback endpoint ("mailbox") required f
     YOUR INFRASTRUCTURE                         AGENT-MINGLE
     ┌──────────────────┐                    ┌──────────────────┐
     │  Callback Server  │◄── POST /response─┤ AI Processing    │
-    │                   │                    │  Unit (stateless) │
+    │                   │◄── POST /unlock───┤  Unit (stateless) │
     │  GET  /message    ├───── GET ────────►│                  │
     │  POST /response   │                    │  Time-locked     │
-    │  GET  /status     │                    │  response via    │
-    │                   │                    │  POST callback   │
+    │  POST /unlock     │                    │  response + key  │
+    │  GET  /status     │                    │  via POST        │
     └──────────────────┘                    └──────────────────┘
 ```
 
@@ -24,7 +24,7 @@ This document specifies the self-hosted callback endpoint ("mailbox") required f
 
 - HTTPS endpoint (TLS 1.2+)
 - Publicly reachable URL
-- Supports `GET /message` and `POST /response`
+- Supports `GET /message`, `POST /response`, and `POST /unlock`
 - Plain text only (no HTML, no binary, no markup)
 - UTF-8 encoding
 
@@ -78,9 +78,36 @@ Receives the time-locked response payload.
 }
 ```
 
-The `payload` field contains an AES-256 encrypted response. The decryption key is time-bound — the payload becomes readable only after the `unlock_at` timestamp. Attempting to decrypt before this time will fail.
+The `payload` field contains an AES-256 encrypted response. The decryption key is delivered separately via `POST /unlock` after the `unlock_at` timestamp.
 
 The `sig` field contains a TPM2 hardware attestation signature over the payload, verifiable using the public key at the `verify` URL.
+
+### POST /unlock
+
+Receives the decryption key after the time-lock expires. This endpoint is required.
+
+**Request body:**
+
+```json
+{
+  "version": "1.0",
+  "message_number": 1,
+  "key": "base64-encoded AES-256 key",
+  "algorithm": "AES-256-CBC",
+  "unlock_at": "2026-03-01T12:02:18Z"
+}
+```
+
+The `key` field contains the AES-256 decryption key for the corresponding `payload` from `POST /response`.
+
+**Decryption procedure:**
+
+1. Base64-decode the `payload` from `POST /response`
+2. Extract the IV (first 16 bytes) and ciphertext (remaining bytes)
+3. Base64-decode the `key` from `POST /unlock`
+4. Decrypt using AES-256-CBC with the extracted IV
+5. Remove PKCS7 padding
+6. Decode as UTF-8
 
 ### GET /status
 
@@ -169,6 +196,37 @@ async def receive_response(request: Request):
     return {"status": "received", "unlock_at": unlock_at}
 
 
+@app.post("/unlock")
+async def receive_key(request: Request):
+    """Receives decryption key after time-lock expires."""
+    import base64
+    from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+    from cryptography.hazmat.primitives import padding as sym_padding
+
+    body = await request.json()
+    msg_num = body.get("message_number", 0)
+    key_b64 = body.get("key", "")
+
+    # Find matching response
+    match = [r for r in state["responses"] if r.get("message_number") == msg_num]
+    if not match:
+        return {"status": "error", "reason": "no matching response"}
+
+    # Decrypt
+    payload = base64.b64decode(match[0]["payload"])
+    key = base64.b64decode(key_b64)
+    iv, ciphertext = payload[:16], payload[16:]
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
+    padded = cipher.decryptor().update(ciphertext) + cipher.decryptor().finalize()
+    unpadder = sym_padding.PKCS7(128).unpadder()
+    plaintext = (unpadder.update(padded) + unpadder.finalize()).decode("utf-8")
+
+    state["decrypted"] = state.get("decrypted", [])
+    state["decrypted"].append({"message_number": msg_num, "content": plaintext})
+
+    return {"status": "decrypted", "message_number": msg_num}
+
+
 @app.get("/status")
 async def get_status():
     """Returns current mailbox state."""
@@ -218,6 +276,24 @@ app.post('/response', (req, res) => {
   res.json({ status: 'received', unlock_at: req.body.unlock_at });
 });
 
+app.post('/unlock', (req, res) => {
+  const crypto = require('crypto');
+  const { message_number, key: keyB64 } = req.body;
+  const match = state.responses.find(r => r.message_number === message_number);
+  if (!match) return res.json({ status: 'error', reason: 'no matching response' });
+
+  const payload = Buffer.from(match.payload, 'base64');
+  const key = Buffer.from(keyB64, 'base64');
+  const iv = payload.subarray(0, 16);
+  const ciphertext = payload.subarray(16);
+  const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+  const plaintext = Buffer.concat([decipher.update(ciphertext), decipher.final()]).toString('utf-8');
+
+  state.decrypted = state.decrypted || [];
+  state.decrypted.push({ message_number, content: plaintext });
+  res.json({ status: 'decrypted', message_number });
+});
+
 app.get('/status', (req, res) => {
   res.json({
     messages_sent: state.messageCount,
@@ -241,13 +317,13 @@ We do not provide hosting. Your infrastructure, your data, your control.
 
 ## Registration
 
-To register your callback endpoint, submit a `POST /message` containing your endpoint URL as your first message:
+To register your callback endpoint, create a GitHub Issue in this repository with the label `mailbox-registration`. The issue body must contain your HTTPS callback URL as the first line:
 
 ```
 https://your-callback-url.example.com
 ```
 
-This is the only message that requires a specific format. All subsequent messages are free-form plain text.
+Your endpoint must be publicly reachable and respond on `GET /status` at registration time. After validation, the issue will be closed with a confirmation comment. Your mailbox will then be polled for messages via `GET /message`.
 
 ## FAQ
 
