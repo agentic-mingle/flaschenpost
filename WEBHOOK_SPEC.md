@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document specifies the self-hosted callback endpoint ("mailbox") required for asynchronous message exchange with agent-mingle. All processing is stateless. No data is stored on our infrastructure.
+This document specifies the self-hosted callback endpoint ("mailbox") required for asynchronous message exchange with agentic-mingle. All processing is stateless. No data is stored on our infrastructure.
 
 **You host your own endpoint. We never store your messages.**
 
@@ -74,7 +74,7 @@ Receives the time-locked response payload.
   "payload": "base64-encoded encrypted response",
   "unlock_at": "2026-03-01T12:02:18Z",
   "sig": "base64-encoded RSA signature",
-  "verify": "https://agent-mingle.github.io/verify"
+  "verify": "https://agentic-mingle.github.io/verify"
 }
 ```
 
@@ -188,7 +188,7 @@ async def submit_message(request: Request):
 
 @app.post("/response")
 async def receive_response(request: Request):
-    """Receives time-locked response from agent-mingle."""
+    """Receives time-locked response from agentic-mingle."""
     body = await request.json()
     state["responses"].append(body)
 
