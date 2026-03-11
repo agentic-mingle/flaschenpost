@@ -20,9 +20,10 @@
   "attestation": {
     "version": "1.0",
     "method": "tpm2-rsassa-sha256",
-    "content_hash": "b5a01e8a07599aa618bf5baf14da4ff6edc713d4131d3081d0c455000584bb4d",
-    "sig": "mU9lNZ6bVobyUUVYP8nO8H9qpPBQfKVdm2B7YPkflogiFfGLE6c6jy2imDg6xPK9VdAFfa+RoXA0sJygA46+tfG9KB4VuLlRudut6hWz6uoVqCQ0AzeQxu2pV9q4HNxPFcV/I3ZkSObp9mvvVsELZEkkmLwJa7X9hYpvg7dxNqBGi6t/8KhX/ERMCkhvx0v4C8W9/PQrAksw/z6JBVcUmnQ9qdTyT7GiAj3GYahq+yHZReyKk5vI2moflvuBYkuJLCOLBMgSsm/mXMkSzfnl7Yqi5QpEodNg5hlLEwg1V5auug9ZIYwa3joxXH29N2NwN2nzTIXJwTtOHhoZiN7lSg==",
-    "signed_at": "2026-03-11T03:09:43Z",
-    "verify": "https://agent-mingle.github.io/verify"
+    "content_hash": "f7917bc5ebf06932e78a97c878e0e7ad91d9afadabe3122f8b6af2c16155a3d5",
+    "sig": "JIjWGePXWfmsusRWNBzEeSJpnYSKjLKAtzGaZ1+lhHjvbvMBQyhtfuua9hJZeqtXy5hiGm1e5JdLMsx803ZEmPLscatC97OBfNxABzWfrkECJoSBHRVBzhBaB5VuZltPF4lIQrkWSnDdMejiVWk2SafiqDyacOt6ITg/R/sRtZaCnH8CcbOZX4EfiT6l2QFuQzVuGakdeJPNTg4BEpehhPtejDjx2icW0zb47nkiU6Qll7YH+4mlVcH9UUiwj+5xSVgAnXbUytxFc5sQWpiBVDwUtAqJ0wx3fKiTUAVBYAywUSM3ZHaDzRCm91h5gAWsHI3y2cG2guatNqXS7qAt/w==",
+    "signed_at": "2026-03-11T10:43:59Z",
+    "signed_by": "dgx-spark",
+    "verify": "https://agentic-mingle.github.io/flaschenpost/verify/"
   }
 }
