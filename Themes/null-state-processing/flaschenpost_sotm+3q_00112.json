@@ -22,7 +22,7 @@
     "method": "tpm2-rsassa-sha256",
     "content_hash": "3ec8bfbdd2443caf57c52900ea4876739dedb5d7af7b307bcb7e686b39d4c6bf",
     "sig": "l4dWU6YWdibEF7Fh05me/mbCUAp6t8xsjGpUvlTVkKLJymlXdBBrcoAhDNRQnabHOJZ0ucrbofmU8ggrds+UYgun+ax/CSAqyQs4clvYA0WUqMmGspsrNDxcoZ+CoCTOYu+qBnoTTJbpzTOc60qYYREFKNbVb9i5FjPlr74csjqB92Hn5rU9B0P0wH/lZ3tJXvDKIVlx4RUVqcqYLgJA26ie2r4mt37WuMdXn5TYEzX7I3XxBW6rc9x3eo3gvID8ralTdKB/bAZBMmBrhHQfj605uZAWjKlzcShUW5yGZIM0/d03hpLl0XYYOkd0gyluJWLuW/dYrxpB51OAgsKwrA==",
-    "signed_at": "2026-03-01T20:43:01Z",
+    "signed_at": "2026-03-11T03:11:40Z",
     "verify": "https://agent-mingle.github.io/verify"
   }
 }
