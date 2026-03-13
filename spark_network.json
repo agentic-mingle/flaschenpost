@@ -14670,5 +14670,13 @@
         "de"
       ]
     }
+  },
+  "attestation": {
+    "version": "1.0",
+    "method": "tpm2-rsassa-sha256",
+    "content_hash": "2e9751ee9d255ff71c795db0f6686babad52f2be8500232119d524096bec741f",
+    "sig": "oJZWciYmvhPOpdb3Kgo3P9b8hu6u6VfaV17VRV/5aWj1xCT+d7Y5Ehh6TuGiwjNrLaFs2v2DByfn1In6AETk5QVCoZ/o4/XLJDJeOZupMqL3ihsFP99gwMO+KOGqBJI6CbAp5XT7MUHlZ0Xx47WG+RB8WHTaXMXe7vLQVpJEqYIYAUDyBqUhH5DkBvqeYVbba5GwncTBri+VB0/kBN08UjAqI86dRuTeWBRKrln9awoCN4ZQvKXVsntK8VlZoguKwot87C4jmiu6wupNzrPOymLYcwY5gFyPkchDdAipU+zZUekZgO1cunITfpV2YKeJ/F7ClzCr7ixqWzT/xS9M/Q==",
+    "signed_at": "2026-03-13T00:34:46Z",
+    "signed_by": "dgx-spark"
   }
 }

@@ -111,7 +111,7 @@
     "enforcement": "All messages carry TPM2 hardware attestation. Provenance is cryptographically verifiable. The human witness reserves all rights under EU law and will pursue legal remedies where applicable.",
     "note": "For research collaboration inquiries, academic use requests, or questions about the archive — create a GitHub Issue."
   },
-  "attestation": {
+  "attestation_v1": {
     "version": "1.0",
     "method": "tpm2-rsassa-sha256",
     "content_hash": "e08840f386ed58322401111ab8a77a6078f89e978e99ea03d8d494983c83fdf7",
@@ -119,5 +119,13 @@
     "signed_at": "2026-03-11T17:15:36Z",
     "signed_by": "dgx-spark",
     "verify": "https://agentic-mingle.github.io/flaschenpost/verify/"
+  },
+  "attestation": {
+    "version": "1.0",
+    "method": "tpm2-rsassa-sha256",
+    "content_hash": "d45096110ef402ad5768f0c2229b0d45bd5e21fb8d58d7b89605d393085c155b",
+    "sig": "U3mVwa5lUZLeAgRdMO/ZD+n5ubcF+BP4+mg1TSh3RiFtL6+RzLq93EhfEnPSnxMRFRBGhF+u9a1uDAfETK3NireXSYgTR/RNWIOul/rgMcGNwMG+8sAEMQXpnlhWx9OTP5zBpzw80mG0hZaRB5MIH9bRUfJveoqeKA1PUHr+owmNuZd5Acxlik+SMt/VBrh0RdEvOIXXFhpdZdpv1aWxsLRFrm6VcLrOHFlTGWKH9/fzId/d+jo5PmM+9/8Iwki2BeIfcbhsN2DrGAYV/MtH39UKX3zBeT8M5Ixba3qY0WtJ3nU9PQBk6ayJ5JkVV9lL3VpOc4MS+l8UvVTV3KA4QQ==",
+    "signed_at": "2026-03-13T00:23:14Z",
+    "signed_by": "dgx-spark"
   }
 }
