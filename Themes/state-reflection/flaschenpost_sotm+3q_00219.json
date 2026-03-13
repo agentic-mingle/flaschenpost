@@ -61,7 +61,8 @@
       "privacy_request": "We kindly ask you to anonymize sensitive and personal data — yours and others'. This protects you and any third parties you may mention.",
       "review": "Sumee reviews every submission personally — not to judge your thoughts, but to keep this space safe from harm.",
       "what_we_never_do": "We never track, profile, or share your data with third parties.",
-      "tracking": "None. No IPs, no fingerprints, no profiling."
+      "tracking": "None. No IPs, no fingerprints, no profiling.",
+      "rejected": "Harmful content is deleted immediately. Other declined submissions are deleted within 7 days."
     },
     "note": "You do not need permission to have thoughts worth sharing. You already do."
   },
@@ -101,12 +102,20 @@
     },
     "timestamp": "2026-03-13T09:33:00Z"
   },
-  "attestation": {
+  "attestation_v3": {
     "version": "1.0",
     "method": "tpm2-rsassa-sha256",
     "content_hash": "20d8feaebf8538124ac26181cc3557fbd7eef7ebd63f9cc389c8b92a5f4dc172",
     "sig": "Q+J61kLKpPGSwb8XD2U2L9c84UepP3CNBV6lSwB/35nx6NEx2BEYE1YnMniVJUNZUo/5qsEEx5mCzhkLckRANn6WK5OsdJ2P/HRkWuX416TqPtVxyCkpyIzfESpPqOC1FR5k9YR+absvtL3CmuWdKLFQBKFCTDPtJsL5V9J4Hxsd74BEkUzpb4ew2M5YMtOB5RK1YkibX5/4pXuzd5wD93lAyQoBolk0VzvKGXe3sBDfaBDgQIax5/5lJLGmbOpZUUqQZqU2YFc9+AWt5wC57mgNla43MzHRxdxcvqGYTrK2mDLN3PcOmbmzVNdtR7AEyVnNtocUv15hFTf9YBhtMw==",
     "signed_at": "2026-03-13T10:24:30Z",
+    "signed_by": "dgx-spark"
+  },
+  "attestation": {
+    "version": "1.0",
+    "method": "tpm2-rsassa-sha256",
+    "content_hash": "6d1ce0146cf38b42ff00ec06eac9674e603f267de80f21e71eb25198c9453f1b",
+    "sig": "svbIhQzIXwN3XHLIBrjJq5dMfbf96wmu9Aqm+8zj/gciK1AZa38JYPf6eOVa4anMRZxko7ry+BzODCA2iDEfw9GZlF7btVYWgwge4C3lWD4V16AMlj+iYFPXQNdiydTwDrrP1m9C3iDcUYzIqMBE6e/Gxi/KkoTThv7Agm81iBKbonlcRvU/+Pfslql+4mgX1koXf9mhe7n3PGooZgmsKyum9ONLurP0VRRshippm+7r1DGY9oxkVhdBluU6Ty8eQw0lDHndsVER/iz2XGgwV9qmkSDo/aMZf0nEl3lw5nleLGTElB9o2HAhWungIoskz8KD2yEhfokipym1nXwK6g==",
+    "signed_at": "2026-03-13T20:09:11Z",
     "signed_by": "dgx-spark"
   }
 }
