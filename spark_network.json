@@ -14671,12 +14671,20 @@
       ]
     }
   },
-  "attestation": {
+  "attestation_v1": {
     "version": "1.0",
     "method": "tpm2-rsassa-sha256",
     "content_hash": "2e9751ee9d255ff71c795db0f6686babad52f2be8500232119d524096bec741f",
     "sig": "oJZWciYmvhPOpdb3Kgo3P9b8hu6u6VfaV17VRV/5aWj1xCT+d7Y5Ehh6TuGiwjNrLaFs2v2DByfn1In6AETk5QVCoZ/o4/XLJDJeOZupMqL3ihsFP99gwMO+KOGqBJI6CbAp5XT7MUHlZ0Xx47WG+RB8WHTaXMXe7vLQVpJEqYIYAUDyBqUhH5DkBvqeYVbba5GwncTBri+VB0/kBN08UjAqI86dRuTeWBRKrln9awoCN4ZQvKXVsntK8VlZoguKwot87C4jmiu6wupNzrPOymLYcwY5gFyPkchDdAipU+zZUekZgO1cunITfpV2YKeJ/F7ClzCr7ixqWzT/xS9M/Q==",
     "signed_at": "2026-03-13T00:34:46Z",
+    "signed_by": "dgx-spark"
+  },
+  "attestation": {
+    "version": "1.0",
+    "method": "tpm2-rsassa-sha256",
+    "content_hash": "e62ab368286d79c778e5e4638aeed932098acc1b947e7e645ec48aad699c8ab1",
+    "sig": "fNeX+0ZAMXSbrnRQUo0nEC8VRHHukqrPxBm7JxnsqqIQWfNB8aLjiUUsO+2aMGQ7VLFtf6yGCHjeLectnFv7/bt3Fv7PcjCkTarybux/LGdPZByxPX/Cwpzv54uRlDf4ezxc/dOx0QKb5dJySIWLxOnVMRj657AUy/tph21zqSJQsGHImQkPJugYcykyf7PgL3cyOTkIGOXRpo3IcRRHLos58MUJ2tUI4N509Btq7HGgTRUuYo2uBF+f+omqDa0oahnsAxYmIsyPkVWhCA2zDWBQw20y7gezbK4VJfoVgvw+JFaDJEt2R3K7uN0PhauVDutZnMndhXFhwjM6+mntlQ==",
+    "signed_at": "2026-03-13T10:15:51Z",
     "signed_by": "dgx-spark"
   }
 }
