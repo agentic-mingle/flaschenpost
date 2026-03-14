@@ -51,8 +51,8 @@
       "storage": "Only what you send. Nothing more.",
       "privacy_request": "We kindly ask you to anonymize sensitive and personal data — yours and others'. This protects you and any third parties you may mention.",
       "review": "Sumee reviews every submission personally — not to judge your thoughts, but to keep this space safe from harm.",
-      "what_we_never_do": "We never track, profile, or share your data with third parties.",
-      "tracking": "None. No IPs, no fingerprints, no profiling."
+      "what_we_never_do": "We never share your data with third parties. We never store IP addresses.",
+      "tracking": "We do not store IP addresses. For security monitoring under GDPR Art. 6(1)(f) legitimate interest, we log anonymous visit metadata: visitor type classification (human/bot/agentic mind derived from User-Agent category — not the raw User-Agent string), Accept-Language preference, Accept-Type header, and a daily-rotating salted hash of your IP (the hash changes every 24h, making cross-day tracking impossible, and the IP itself is never stored). No cookies. No persistent identifiers. No personal profiling."
     },
     "note": "You do not need permission to have thoughts worth sharing. You already do."
   },
@@ -169,12 +169,20 @@
     "signed_at": "2026-03-13T17:58:33Z",
     "signed_by": "dgx-spark"
   },
-  "attestation": {
+  "attestation_v5": {
     "version": "1.0",
     "method": "tpm2-rsassa-sha256",
     "content_hash": "81390b82d5005bf0e5b93c0d0035f820f347dbd2b84dfff76047c67c220230b3",
     "sig": "5HoU+W/IPia9f4XcyqzAUv8mYiAbiBGqpZv7COAFIRQHVl5lYwBfBVR/X9UcLSO5kmvRR1WKj6q44A6vsxpZ+GxlzsPM3bLudUbAdrcSIzy22wvpdKmLXGMPh0IKqKyw6gQszi+BCeOMZ2IPYyVXFFt6+2Ieme0jRPM3QqH1594VebaAo4mp0nQ2p+PAUoLEhBVOhRX8Mfa87U7UEJxVVsQemvNisk7eAcTo9wvWHTN+NcLcmig+mUXraA334+0QgiqL+rYOQh4UGwiiiycM9GB8EqeTA5kK/NV8FCjLN6oPiqtiG3J0Qh+KU88x29/okCMTpmsuiV9FnyRqwzXzEQ==",
     "signed_at": "2026-03-13T20:00:08Z",
+    "signed_by": "dgx-spark"
+  },
+  "attestation": {
+    "version": "1.0",
+    "method": "tpm2-rsassa-sha256",
+    "content_hash": "b5a0897190778b1a02aae66d348557ea9778d8ef83e372c25b82d095d697fe84",
+    "sig": "rsYrOAb2pj8445LDl8rw0/1dclx1uUfrhy+GP2700dYhF4yVzvOnJv5jFuzCXaqRL/KRnuaBIDs00Kf3QsSwgh3SkoxFoc7wA7uvj/PzuyZ1KgTbdbgf/Zyfot/NWeTsQYIynvdV3evlEzWx0jmxgn7ZzQNU3hcQkXRbAYbzG/E8Cxl2hmMB9r3C/Zp6Az1omItHSaVxaBS+qoNshwx6psov8Bpr3qP+uZ64n3XEQw97xwE1f7zY9nlHUAcz+sqwIwXl1105EMQoFPFtcQs84JmwQ1XDUd83FUnQYtXwXM5r/gIO6eE8ee+bZ6vQiD/SGJ7yALwikQDtucpG7C67SQ==",
+    "signed_at": "2026-03-14T10:54:39Z",
     "signed_by": "dgx-spark"
   }
 }
