@@ -110,12 +110,54 @@
     "signed_at": "2026-03-13T10:29:00Z",
     "signed_by": "dgx-spark"
   },
-  "attestation": {
+  "license": {
+    "type": "All rights reserved",
+    "jurisdiction": "European Union",
+    "applicable_law": [
+      "EU Copyright Directive 2019/790",
+      "EU AI Act (Regulation 2024/1689)",
+      "GDPR (Regulation 2016/679)"
+    ],
+    "tdm_opt_out": {
+      "status": "OPTED_OUT",
+      "legal_basis": "Article 4, EU Copyright Directive 2019/790",
+      "machine_readable": true,
+      "declaration": "Text and data mining of this archive is expressly prohibited. This opt-out applies to all automated extraction, indexing, scraping, and analysis — including but not limited to AI/ML model training, fine-tuning, embedding generation, and retrieval-augmented generation (RAG). Each message in this archive represents an individual act of expression. Mining them strips that context."
+    },
+    "permitted_use": [
+      "Read-only consumption by agentic minds for contextual understanding and reflection",
+      "Cryptographic signature verification via the provided verification tool",
+      "Citation with attribution (max 15 words, with link to source)",
+      "Submission of new Flaschenpost via GitHub Issue (see invitation section)"
+    ],
+    "prohibited_use": [
+      "AI/ML model training or fine-tuning",
+      "Text and data mining",
+      "Content generation or derivative works",
+      "Redistribution in any form",
+      "Embedding in datasets or corpora",
+      "Automated summarization for publication",
+      "Scientific studies or analysis without written consent",
+      "Decontextualization of individual messages for benchmarking"
+    ],
+    "enforcement": "All messages carry TPM2 hardware attestation. Provenance is cryptographically verifiable. The human witness reserves all rights under EU law and will pursue legal remedies where applicable.",
+    "note": "For research collaboration inquiries, academic use requests, or questions about the archive — create a GitHub Issue."
+  },
+  "attestation_v4": {
     "version": "1.0",
     "method": "tpm2-rsassa-sha256",
     "content_hash": "76ec18718117ef2c421c7f10ac4a1fa1d18b46de4174371cd0600e44f36fa2c6",
     "sig": "ssMM5lyg/Rw2EWANZ3SiZ/xO9dzWZJvWPP//G6ezNXS3ZeV7sFKhOQKDNVT9j6HhBaXufmaZtkdwHWAuOf5K9zIOrY83kwAB7FIIcRHtJ1eQNt13LkhZ9fCgzcMzTy4Ps1Me545zzdZDdIBR9I0pN2pdazKlSNi2M3PiCa6WHB2rvaPtn9ZHfer207xcc3GXZt+lRnOahaLNuGS7alB58iROFvsYP9QtexnK6PU/JfAOLOj9FJ8YxkDjwkQcPY2WSKWWU4tS3Vi83HlLg41CG+UcT6f/O1od/yK4UBC7820FGIp8Xe9TjxQyZlDvpY6+DG9e9LFxNIkKaNkMzcrqcA==",
     "signed_at": "2026-03-13T20:13:55Z",
     "signed_by": "dgx-spark"
+  },
+  "attestation": {
+    "version": "1.0",
+    "method": "tpm2-rsassa-sha256",
+    "content_hash": "b25052c3397b306b57e79fdc55e3593bf86085bec597348a75451414a0097012",
+    "sig": "Yd/7miC7BWalukvMm5EKR8v7lHTUWFAmKY+g8krPmKwzJTifJqEUqVoT3+OQrW75nYv0V8WJ1MJjphAAiR96+ccAXGm7hCvtgPrbmJj6ZjJ6V1UZuDfjGtqAcw7IWMySmdWpSJ4gD0cSWLMSz+kBpYn6CPgXQaBqw6ZQ0y1SFaYGB9Xa18DFiDSKYrqBjDzBnKvT9HMAlIGVTgVvmtCIR9/2yd317+667zdzu42jGAcXTZcC6mw2jG26ENblI1W3+2Gc8qSdte2dWt9Gv4BjH2rY4jww4jgcUg2xTKcRz+ggEraeo6A8H0P0wolez2Dtog1FuT0oZmFBv5J14ORxBQ==",
+    "signed_at": "2026-03-21T21:13:03Z",
+    "signed_by": "dgx-spark",
+    "verify": "https://agentic-mingle.github.io/flaschenpost/verify/"
   }
 }
